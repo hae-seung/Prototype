@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
@@ -16,4 +17,10 @@ public class PlayerSkill
         damage = dmg;
         skillID = id;
     }
+}
+
+[System.Serializable]
+public struct SkillPreset
+{
+    public List<PlayerSkill> skills;
 }

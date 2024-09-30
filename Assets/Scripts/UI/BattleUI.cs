@@ -8,7 +8,7 @@ using UnityEngine.UI;
 public class PanelState
 {
     public bool[] panelStates;  // 패널의 활성화 상태 저장 배열
-
+    
     public PanelState(int size)  // 생성자
     {
         panelStates = new bool[size];
@@ -32,25 +32,24 @@ public class BattleUI : MonoBehaviour
         // 패널의 초기 상태 저장
         SaveCurrentPanelState();
     }
-
+    
     public void SetSkillToButton()
     {
-        for (int i = 0; i < skills.Length; i++)
+        SkillPreset curPreset = playerStatus.SkillPreset;
+        
+        for (int i = 0; i < curPreset.skills.Count; i++)
         {
-            if (i < playerStatus.playerSkills.Count)
+            PlayerSkill skill = curPreset.skills[i];
+            Text buttonText = skills[i].GetComponentInChildren<Text>();
+
+            if (buttonText != null)
             {
-                PlayerSkill skill = playerStatus.playerSkills[i];
-                Text buttonText = skills[i].GetComponentInChildren<Text>();
-
-                if (buttonText != null)
-                {
-                    buttonText.text = skill.skillName;  // 스킬 이름을 버튼 텍스트로 설정
-                }
-
-                // 클릭 시 스킬 ID를 전달
-                int skillID = skill.skillID;
-                skills[i].onClick.AddListener(() => OnSkillButtonClick(skillID));
+                buttonText.text = skill.skillName;
             }
+
+            int skillID = skill.skillID;
+            skills[i].onClick.RemoveAllListeners();
+            skills[i].onClick.AddListener(() => OnSkillButtonClick(skillID));
         }
     }
 
@@ -164,4 +163,25 @@ public class BattleUI : MonoBehaviour
 
         Debug.Log("현재 패널 상태가 저장되었습니다.");
     }
+
+    public void onClickedSwapButton()
+    {
+        // 현재 스킬 프리셋이 1번이면 2번으로, 2번이면 1번으로 변경
+        if (playerStatus.SkillPreset.Equals(playerStatus.skillPreset1))
+        {
+            playerStatus.SkillPreset = playerStatus.skillPreset2;
+            Debug.Log("스킬 프리셋을 2로 변경하였습니다.");
+        }
+        else
+        {
+            playerStatus.SkillPreset = playerStatus.skillPreset1;
+            Debug.Log("스킬 프리셋을 1로 변경하였습니다.");
+        }
+
+        // 변경된 프리셋을 UI에 반영 (스킬 버튼 업데이트)
+        SetSkillToButton();
+    }
+
+
+    
 }
